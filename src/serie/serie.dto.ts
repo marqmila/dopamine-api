@@ -1,6 +1,7 @@
 import {
   IsDateString,
   IsEnum,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
@@ -24,10 +25,8 @@ export class SerieDto {
   @MaxLength(256)
   title: string;
 
-  @IsString()
-  @MinLength(5)
-  @MaxLength(512)
-  season: string;
+  @IsNumber()
+  season: number;
 
   @IsEnum(SerieStatusEnum)
   status: string;
