@@ -13,24 +13,30 @@ export enum MovieWhoEnum {
   US = 'US',
 }
 
-export class SerieDto {
-  @IsUUID()
-  @IsOptional()
+export class MovieDto {
+  // @IsUUID()
+  // @IsOptional()
   id: string;
 
-  @IsString()
-  @MinLength(3)
-  @MaxLength(256)
+  // @IsString()
+  // @MinLength(3)
+  // @MaxLength(256)
   title: string;
 
-  @IsString()
-  @MinLength(5)
-  @MaxLength(512)
+  // @IsString()
+  // @MinLength(5)
+  // @MaxLength(512)
   director: string;
 
-  @IsEnum(MovieWhoEnum)
+  // @IsEnum(MovieWhoEnum)
   who: string;
 
-  @IsDateString()
+  // @IsDateString()
   finishedDate: Date;
+}
+
+export interface FindAllParameters {
+  title: string;
+  who: string;
+  director: string;
 }

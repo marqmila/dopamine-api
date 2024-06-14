@@ -7,7 +7,6 @@ export class SerieService {
 
   create(serie: SerieDto) {
     this.series.push(serie);
-    console.log(this.series);
   }
 
   findById(id: string): SerieDto {
