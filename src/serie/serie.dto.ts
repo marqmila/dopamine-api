@@ -15,22 +15,26 @@ export enum SerieStatusEnum {
 }
 
 export class SerieDto {
-
-  @IsUUID()
-  @IsOptional()
+  // @IsUUID()
+  // @IsOptional()
   id: string;
 
-  @IsString()
-  @MinLength(3)
-  @MaxLength(256)
+  // @IsString()
+  // @MinLength(3)
+  // @MaxLength(256)
   title: string;
 
-  @IsNumber()
+  // @IsNumber()
   season: number;
 
-  @IsEnum(SerieStatusEnum)
+  // @IsEnum(SerieStatusEnum)
   status: string;
 
-  @IsDateString()
+  // @IsDateString()
   finishedDate: Date;
+}
+
+export interface FindAllParameters {
+  title: string;
+  status: string;
 }

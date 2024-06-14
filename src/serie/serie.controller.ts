@@ -1,6 +1,15 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
+import { FindAllParameters, SerieDto } from './serie.dto';
 import { SerieService } from './serie.service';
-import { SerieDto } from './serie.dto';
 
 @Controller('serie')
 export class SerieController {
@@ -11,4 +20,23 @@ export class SerieController {
     this.serieService.create(user);
   }
 
+  @Get('/:id')
+  findById(@Param('id') id: string): SerieDto {
+    return this.serieService.findById(id);
+  }
+
+  @Get()
+  findAll(@Query() params: FindAllParameters): SerieDto[] {
+    return this.serieService.findAll(params);
+  }
+
+  @Put()
+  update(@Body() serie: SerieDto) {
+    this.serieService.update(serie);
+  }
+
+  @Delete('/:id')
+  remove(@Param('id') id: string) {
+    return this.serieService.remove(id);
+  }
 }
