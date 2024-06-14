@@ -22,7 +22,6 @@ export enum BookFormatEnum {
 }
 
 export class BookDto {
-
   @IsUUID()
   @IsOptional()
   id: string;
@@ -47,8 +46,17 @@ export class BookDto {
   bookFormat: string;
 
   @IsBoolean()
-  purchase?: true;
+  purchase?: boolean;
 
   @IsDateString()
   finishedDate?: Date;
+}
+
+export interface FindAllParameters {
+  title: string;
+  author: string;
+  typeOfBook: string;
+  bookFormat: string;
+  purchase: boolean;
+  finishedDate: Date;
 }

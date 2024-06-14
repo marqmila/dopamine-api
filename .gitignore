@@ -6,6 +6,9 @@
 # Docker-compose
 *.yml
 
+#Arquivos txt com os JSON para testes no Insomnia
+*.txt
+
 # Logs
 logs
 *.log
