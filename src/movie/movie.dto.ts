@@ -8,13 +8,12 @@ import {
   MinLength,
 } from 'class-validator';
 
-export enum MovieStatusEnum {
+export enum MovieWhoEnum {
   ME = 'ME',
   US = 'US',
 }
 
 export class SerieDto {
-
   @IsUUID()
   @IsOptional()
   id: string;
@@ -29,8 +28,8 @@ export class SerieDto {
   @MaxLength(512)
   director: string;
 
-  @IsEnum(MovieStatusEnum)
-  status: string;
+  @IsEnum(MovieWhoEnum)
+  who: string;
 
   @IsDateString()
   finishedDate: Date;

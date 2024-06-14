@@ -31,7 +31,7 @@ export class SerieService {
         match = false;
       }
 
-      if (params.status != undefined && !s.status.includes(params.status)) {
+      if (params.who != undefined && !s.who.includes(params.who)) {
         match = false;
       }
 

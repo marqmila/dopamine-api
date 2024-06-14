@@ -9,7 +9,7 @@ import {
   MinLength,
 } from 'class-validator';
 
-export enum SerieStatusEnum {
+export enum SerieWhoEnum {
   ME = 'ME',
   US = 'US',
 }
@@ -27,8 +27,8 @@ export class SerieDto {
   // @IsNumber()
   season: number;
 
-  // @IsEnum(SerieStatusEnum)
-  status: string;
+  // @IsEnum(SerieWhoEnum)
+  who: string;
 
   // @IsDateString()
   finishedDate: Date;
@@ -36,5 +36,5 @@ export class SerieDto {
 
 export interface FindAllParameters {
   title: string;
-  status: string;
+  who: string;
 }
