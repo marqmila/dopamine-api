@@ -3,3 +3,7 @@ export class UserDto {
   username: string;
   password: string;
 }
+
+export interface FindAllParameters {
+  username: string;
+}
