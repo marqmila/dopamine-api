@@ -1,11 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { FindAllParameters, MovieDto } from './movie.dto';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class MovieService {
   private movies: MovieDto[] = [];
 
   create(movie: MovieDto) {
+    movie.id = uuid();
     this.movies.push(movie);
   }
 

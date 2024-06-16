@@ -46,10 +46,12 @@ export class BookDto {
   bookFormat: string;
 
   @IsBoolean()
-  purchase?: boolean;
+  @IsOptional()
+  purchase: boolean;
 
   @IsDateString()
-  finishedDate?: Date;
+  @IsOptional()
+  finishedDate: Date;
 }
 
 export interface FindAllParameters {

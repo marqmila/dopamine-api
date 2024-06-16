@@ -1,11 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { BookDto, FindAllParameters } from './book.dto';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class BookService {
   private books: BookDto[] = [];
 
   create(book: BookDto) {
+    book.id = uuid();
     this.books.push(book);
   }
 

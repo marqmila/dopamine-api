@@ -1,11 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { FindAllParameters, SerieDto } from './serie.dto';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class SerieService {
   private series: SerieDto[] = [];
 
   create(serie: SerieDto) {
+    serie.id = uuid();
     this.series.push(serie);
   }
 
