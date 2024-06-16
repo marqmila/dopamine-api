@@ -14,24 +14,24 @@ export enum MovieWhoEnum {
 }
 
 export class MovieDto {
-  // @IsUUID()
-  // @IsOptional()
+  @IsUUID()
+  @IsOptional()
   id: string;
 
-  // @IsString()
-  // @MinLength(3)
-  // @MaxLength(256)
+  @IsString()
+  @MinLength(3)
+  @MaxLength(512)
   title: string;
 
-  // @IsString()
-  // @MinLength(5)
-  // @MaxLength(512)
+  @IsString()
+  @MinLength(5)
+  @MaxLength(512)
   director: string;
 
-  // @IsEnum(MovieWhoEnum)
+  @IsEnum(MovieWhoEnum)
   who: string;
 
-  // @IsDateString()
+  @IsDateString()
   finishedDate: Date;
 }
 

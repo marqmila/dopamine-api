@@ -7,10 +7,13 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { BookService } from './book.service';
 import { BookDto, FindAllParameters } from './book.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('book')
 export class BookController {
   constructor(private readonly bookService: BookService) {}

@@ -15,22 +15,22 @@ export enum SerieWhoEnum {
 }
 
 export class SerieDto {
-  // @IsUUID()
-  // @IsOptional()
+  @IsUUID()
+  @IsOptional()
   id: string;
 
-  // @IsString()
-  // @MinLength(3)
-  // @MaxLength(256)
+  @IsString()
+  @MinLength(3)
+  @MaxLength(512)
   title: string;
 
-  // @IsNumber()
+  @IsNumber()
   season: number;
 
-  // @IsEnum(SerieWhoEnum)
+  @IsEnum(SerieWhoEnum)
   who: string;
 
-  // @IsDateString()
+  @IsDateString()
   finishedDate: Date;
 }
 

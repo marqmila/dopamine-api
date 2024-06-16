@@ -7,10 +7,13 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { FindAllParameters, SerieDto } from './serie.dto';
 import { SerieService } from './serie.service';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('serie')
 export class SerieController {
   constructor(private readonly serieService: SerieService) {}

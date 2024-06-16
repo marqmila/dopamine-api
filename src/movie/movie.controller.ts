@@ -7,10 +7,13 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { MovieService } from './movie.service';
 import { FindAllParameters, MovieDto } from './movie.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('movie')
 export class MovieController {
   constructor(private readonly movieService: MovieService) {}
