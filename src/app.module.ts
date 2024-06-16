@@ -7,6 +7,7 @@ import { MovieModule } from './movie/movie.module';
 import { SerieModule } from './serie/serie.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ConfigModule } from '@nestjs/config';
     MovieModule,
     SerieModule,
     AuthModule,
+    DatabaseModule,
   ],
   controllers: [AppController],
   providers: [AppService],
