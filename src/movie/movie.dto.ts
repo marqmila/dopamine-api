@@ -39,4 +39,10 @@ export interface FindAllParameters {
   title: string;
   who: string;
   director: string;
+  finishedDate: Date;
+}
+
+export class MovieRouteParameters {
+  @IsUUID()
+  id: string;
 }

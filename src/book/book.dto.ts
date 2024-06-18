@@ -62,3 +62,8 @@ export interface FindAllParameters {
   purchase: boolean;
   finishedDate: Date;
 }
+
+export class BookRouteParameters {
+  @IsUUID()
+  id: string;
+}

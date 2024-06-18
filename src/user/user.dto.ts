@@ -1,3 +1,5 @@
+import { IsUUID } from 'class-validator';
+
 export class UserDto {
   id: string;
   username: string;
@@ -6,4 +8,14 @@ export class UserDto {
 
 export interface FindAllParameters {
   username: string;
+}
+
+export interface CreateUserResponse {
+  id: string;
+  username;
+}
+
+export class UserRouteParameters {
+  @IsUUID()
+  id: string;
 }

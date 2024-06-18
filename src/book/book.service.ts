@@ -1,86 +1,125 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { BookDto, FindAllParameters } from './book.dto';
+import {
+  BookDto,
+  BookFormatEnum,
+  FindAllParameters,
+  TypeOfBookEnum,
+} from './book.dto';
 import { v4 as uuid } from 'uuid';
+import { InjectRepository } from '@nestjs/typeorm';
+import { BookEntity } from 'src/database/entities/book.entity';
+import { FindOptionsWhere, Like, Repository } from 'typeorm';
 
 @Injectable()
 export class BookService {
-  private books: BookDto[] = [];
+  constructor(
+    @InjectRepository(BookEntity)
+    private readonly bookRepository: Repository<BookEntity>,
+  ) {}
 
-  create(book: BookDto) {
-    book.id = uuid();
-    this.books.push(book);
+  async create(book: BookDto) {
+    const bookToSave: BookEntity = {
+      title: book.title,
+      author: book.author,
+      numberOfPages: book.numberOfPages,
+      typeOfBook: book.typeOfBook,
+      bookFormat: book.bookFormat,
+      purchase: book.purchase,
+      finishedDate: book.finishedDate,
+    };
+
+    const createdBook = await this.bookRepository.save(bookToSave);
+
+    return this.mapEntityToDto(createdBook);
   }
 
-  findById(id: string): BookDto {
-    const foundBook = this.books.filter((b) => b.id === id);
+  async findById(id: string): Promise<BookDto> {
+    const foundBook = await this.bookRepository.findOne({ where: { id } });
 
-    if (foundBook.length) {
-      return foundBook[0];
+    if (!foundBook) {
+      throw new HttpException(
+        `Book with id ${id} not found.`,
+        HttpStatus.NOT_FOUND,
+      );
     }
 
-    throw new HttpException(
-      `Book with id ${id} not found.`,
-      HttpStatus.NOT_FOUND,
-    );
+    return this.mapEntityToDto(foundBook);
   }
 
-  findAll(params: FindAllParameters): BookDto[] {
-    return this.books.filter((b) => {
-      let match = true;
+  async findAll(params: FindAllParameters): Promise<BookDto[]> {
+    const searchParams: FindOptionsWhere<BookEntity> = {};
+    if (params.title) {
+      searchParams.title = Like(`%${params.title}%`);
+    }
 
-      if (params.title != undefined && !b.title.includes(params.title)) {
-        match = false;
-      }
+    if (params.author) {
+      searchParams.author = Like(`%${params.author}%`);
+    }
 
-      if (params.author != undefined && !b.author.includes(params.author)) {
-        match = false;
-      }
+    if (params.typeOfBook) {
+      searchParams.typeOfBook = Like(`%${params.typeOfBook}%`);
+    }
 
-      if (
-        params.typeOfBook != undefined &&
-        !b.typeOfBook.includes(params.typeOfBook)
-      ) {
-        match = false;
-      }
+    if (params.bookFormat) {
+      searchParams.bookFormat = Like(`%${params.bookFormat}%`);
+    }
 
-      if (
-        params.bookFormat != undefined &&
-        !b.bookFormat.includes(params.bookFormat)
-      ) {
-        match = false;
-      }
+    // Incluir busca pelos parâmetros: purchase e finishedDate
 
-      // Need to find a way to "find" with parameters purchase(boolean) and finishedDate(Date)
-
-      return match;
+    const booksFound = await this.bookRepository.find({
+      where: searchParams,
     });
+
+    return booksFound.map((bookEntity) => this.mapEntityToDto(bookEntity));
   }
 
-  update(book: BookDto) {
-    const bookIndex = this.books.findIndex((m) => m.id === book.id);
+  async update(id: string, book: BookDto) {
+    const foundBook = await this.bookRepository.findOne({ where: { id } });
 
-    if (bookIndex >= 0) {
-      this.books[bookIndex] = book;
-      return;
+    if (!foundBook) {
+      throw new HttpException(
+        `Book with id ${book.id} not found.`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
-    throw new HttpException(
-      `Book with id ${book.id} not found.`,
-      HttpStatus.BAD_REQUEST,
-    );
+    await this.bookRepository.update(id, this.mapDtoToEntity(book));
   }
 
-  remove(id: string) {
-    const bookIndex = this.books.findIndex((m) => m.id === id);
+  async remove(id: string) {
+    const result = await this.bookRepository.delete(id);
 
-    if (bookIndex >= 0) {
-      this.books.splice(bookIndex, 1);
-      return;
+    if (!result.affected) {
+      throw new HttpException(
+        `Book with id ${id} not found.`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
+  }
 
-    throw new HttpException(
-      `Book with id ${id} not found.`,
-      HttpStatus.BAD_REQUEST,
-    );
+  private mapEntityToDto(bookEntity: BookEntity): BookDto {
+    return {
+      id: bookEntity.id,
+      title: bookEntity.title,
+      author: bookEntity.author,
+      numberOfPages: bookEntity.numberOfPages,
+      typeOfBook: TypeOfBookEnum[bookEntity.typeOfBook],
+      bookFormat: BookFormatEnum[bookEntity.bookFormat],
+      purchase: bookEntity.purchase,
+      finishedDate: bookEntity.finishedDate,
+    };
+  }
+
+  private mapDtoToEntity(bookDto: BookDto): Partial<BookEntity> {
+    return {
+      id: bookDto.id,
+      title: bookDto.title,
+      author: bookDto.author,
+      numberOfPages: bookDto.numberOfPages,
+      typeOfBook: TypeOfBookEnum[bookDto.typeOfBook],
+      bookFormat: BookFormatEnum[bookDto.bookFormat],
+      purchase: bookDto.purchase,
+      finishedDate: bookDto.finishedDate,
+    };
   }
 }

@@ -3,13 +3,13 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 @Entity({ name: 'book' })
 export class BookEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id?: string;
 
   @Column({ type: 'varchar' })
   title: string;
 
   @Column({ type: 'varchar' })
-  author: number;
+  author: string;
 
   @Column({ type: 'integer', name: 'number_pages' })
   numberOfPages: number;

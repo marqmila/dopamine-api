@@ -9,7 +9,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { FindAllParameters, SerieDto } from './serie.dto';
+import { FindAllParameters, SerieDto, SerieRouteParameters } from './serie.dto';
 import { SerieService } from './serie.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 
@@ -19,23 +19,23 @@ export class SerieController {
   constructor(private readonly serieService: SerieService) {}
 
   @Post()
-  create(@Body() user: SerieDto) {
-    this.serieService.create(user);
+  async create(@Body() user: SerieDto): Promise<SerieDto> {
+    return await this.serieService.create(user);
   }
 
   @Get('/:id')
-  findById(@Param('id') id: string): SerieDto {
+  async findById(@Param('id') id: string): Promise<SerieDto> {
     return this.serieService.findById(id);
   }
 
   @Get()
-  findAll(@Query() params: FindAllParameters): SerieDto[] {
+  async findAll(@Query() params: FindAllParameters): Promise<SerieDto[]> {
     return this.serieService.findAll(params);
   }
 
-  @Put()
-  update(@Body() serie: SerieDto) {
-    this.serieService.update(serie);
+  @Put('/:id')
+  async update(@Param() params: SerieRouteParameters, @Body() serie: SerieDto) {
+    await this.serieService.update(params.id, serie);
   }
 
   @Delete('/:id')

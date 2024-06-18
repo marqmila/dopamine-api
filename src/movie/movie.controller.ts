@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { MovieService } from './movie.service';
-import { FindAllParameters, MovieDto } from './movie.dto';
+import { FindAllParameters, MovieDto, MovieRouteParameters } from './movie.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 
 @UseGuards(AuthGuard)
@@ -24,18 +24,18 @@ export class MovieController {
   }
 
   @Get('/:id')
-  findById(@Param('id') id: string): MovieDto {
+  async findById(@Param('id') id: string): Promise<MovieDto> {
     return this.movieService.findById(id);
   }
 
   @Get()
-  findAll(@Query() params: FindAllParameters): MovieDto[] {
+  async findAll(@Query() params: FindAllParameters): Promise<MovieDto[]> {
     return this.movieService.findAll(params);
   }
 
-  @Put()
-  update(@Body() serie: MovieDto) {
-    this.movieService.update(serie);
+  @Put('/:id')
+  async update(@Param() params: MovieRouteParameters, @Body() movie: MovieDto) {
+    this.movieService.update(params.id, movie);
   }
 
   @Delete('/:id')

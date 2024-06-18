@@ -1,77 +1,105 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { FindAllParameters, MovieDto } from './movie.dto';
+import { FindAllParameters, MovieDto, MovieWhoEnum } from './movie.dto';
 import { v4 as uuid } from 'uuid';
+import { InjectRepository } from '@nestjs/typeorm';
+import { MovieEntity } from 'src/database/entities/movie.entity';
+import { FindOptionsWhere, Like, Repository } from 'typeorm';
 
 @Injectable()
 export class MovieService {
-  private movies: MovieDto[] = [];
+  constructor(
+    @InjectRepository(MovieEntity)
+    private readonly movieRepository: Repository<MovieEntity>,
+  ) {}
 
-  create(movie: MovieDto) {
-    movie.id = uuid();
-    this.movies.push(movie);
+  async create(movie: MovieDto) {
+    const movieToSave: MovieEntity = {
+      title: movie.title,
+      director: movie.director,
+      who: movie.who,
+      finishedDate: movie.finishedDate,
+    };
+
+    const createdMovie = await this.movieRepository.save(movieToSave);
+
+    return this.mapEntityToDto(createdMovie);
   }
 
-  findById(id: string): MovieDto {
-    const foundMovie = this.movies.filter((m) => m.id === id);
+  async findById(id: string): Promise<MovieDto> {
+    const foundMovie = await this.movieRepository.findOne({ where: { id } });
 
-    if (foundMovie.length) {
-      return foundMovie[0];
+    if (!foundMovie) {
+      throw new HttpException(
+        `Movie with id ${id} not found.`,
+        HttpStatus.NOT_FOUND,
+      );
     }
 
-    throw new HttpException(
-      `Movie with id ${id} not found.`,
-      HttpStatus.NOT_FOUND,
-    );
+    return this.mapEntityToDto(foundMovie);
   }
 
-  findAll(params: FindAllParameters): MovieDto[] {
-    return this.movies.filter((m) => {
-      let match = true;
+  async findAll(params: FindAllParameters): Promise<MovieDto[]> {
+    const searchParams: FindOptionsWhere<MovieEntity> = {};
+    if (params.title) {
+      searchParams.title = Like(`%${params.title}%`);
+    }
 
-      if (params.title != undefined && !m.title.includes(params.title)) {
-        match = false;
-      }
+    if (params.director) {
+      searchParams.director = Like(`%${params.director}%`);
+    }
 
-      if (params.who != undefined && !m.who.includes(params.who)) {
-        match = false;
-      }
+    if (params.who) {
+      searchParams.who = Like(`%${params.who}%`);
+    }
 
-      if (
-        params.director != undefined &&
-        !m.director.includes(params.director)
-      ) {
-        match = false;
-      }
-
-      return match;
+    const moviesFound = await this.movieRepository.find({
+      where: searchParams,
     });
+
+    return moviesFound.map((movieEntity) => this.mapEntityToDto(movieEntity));
   }
 
-  update(movie: MovieDto) {
-    const movieIndex = this.movies.findIndex((m) => m.id === movie.id);
+  async update(id: string, movie: MovieDto) {
+    const foundMovie = await this.movieRepository.findOne({ where: { id } });
 
-    if (movieIndex >= 0) {
-      this.movies[movieIndex] = movie;
-      return;
+    if (!foundMovie) {
+      throw new HttpException(
+        `Movie with id ${movie.id} not found.`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
-    throw new HttpException(
-      `Movie with id ${movie.id} not found.`,
-      HttpStatus.BAD_REQUEST,
-    );
+    await this.movieRepository.update(id, this.mapDtoToEntity(movie));
   }
 
-  remove(id: string) {
-    const movieIndex = this.movies.findIndex((m) => m.id === id);
+  async remove(id: string) {
+    const result = await this.movieRepository.delete(id);
 
-    if (movieIndex >= 0) {
-      this.movies.splice(movieIndex, 1);
-      return;
+    if (!result.affected) {
+      throw new HttpException(
+        `Movie with id ${id} not found.`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
+  }
 
-    throw new HttpException(
-      `Movie with id ${id} not found.`,
-      HttpStatus.BAD_REQUEST,
-    );
+  private mapEntityToDto(movieEntity: MovieEntity): MovieDto {
+    return {
+      id: movieEntity.id,
+      title: movieEntity.title,
+      director: movieEntity.director,
+      who: MovieWhoEnum[movieEntity.who],
+      finishedDate: movieEntity.finishedDate,
+    };
+  }
+
+  private mapDtoToEntity(movieDto: MovieDto): Partial<MovieEntity> {
+    return {
+      id: movieDto.id,
+      title: movieDto.title,
+      director: movieDto.director,
+      who: movieDto.who.toString(),
+      finishedDate: movieDto.finishedDate,
+    };
   }
 }

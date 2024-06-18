@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { BookService } from './book.service';
-import { BookDto, FindAllParameters } from './book.dto';
+import { BookDto, BookRouteParameters, FindAllParameters } from './book.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 
 @UseGuards(AuthGuard)
@@ -24,18 +24,18 @@ export class BookController {
   }
 
   @Get('/:id')
-  findById(@Param('id') id: string): BookDto {
+  async findById(@Param('id') id: string): Promise<BookDto> {
     return this.bookService.findById(id);
   }
 
   @Get()
-  findAll(@Query() params: FindAllParameters): BookDto[] {
+  async findAll(@Query() params: FindAllParameters): Promise<BookDto[]> {
     return this.bookService.findAll(params);
   }
 
-  @Put()
-  update(@Body() serie: BookDto) {
-    this.bookService.update(serie);
+  @Put('/:id')
+  update(@Param() params: BookRouteParameters, @Body() serie: BookDto) {
+    this.bookService.update(params.id, serie);
   }
 
   @Delete('/:id')

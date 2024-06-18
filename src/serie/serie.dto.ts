@@ -38,3 +38,8 @@ export interface FindAllParameters {
   title: string;
   who: string;
 }
+
+export class SerieRouteParameters {
+  @IsUUID()
+  id: string;
+}

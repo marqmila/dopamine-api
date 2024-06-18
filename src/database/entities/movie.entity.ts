@@ -3,13 +3,13 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 @Entity({ name: 'movie' })
 export class MovieEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id?: string;
 
   @Column({ type: 'varchar' })
   title: string;
 
   @Column({ type: 'varchar' })
-  director: number;
+  director: string;
 
   @Column({ type: 'varchar' })
   who: string;
